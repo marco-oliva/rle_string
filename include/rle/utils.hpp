@@ -46,8 +46,6 @@
 
 #include <spdlog/spdlog.h>
 
-#include <omp.h>
-
 // Parallel sorting is only available with libstdc++ parallel mode.
 #ifdef __GLIBCXX__
 #include <parallel/algorithm>
