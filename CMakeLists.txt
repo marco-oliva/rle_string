@@ -66,7 +66,10 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/CLIUtils/CLI11.git
         GIT_TAG        v2.3.0
 )
-FetchContent_Populate(cli11)
+FetchContent_GetProperties(cli11)
+if(NOT cli11_POPULATED)
+    FetchContent_Populate(cli11)
+endif()
 include_directories(${cli11_SOURCE_DIR}/include)
 
 ## Add sdsl
@@ -74,7 +77,6 @@ FetchContent_Declare(
         sdsl
         GIT_REPOSITORY https://github.com/simongog/sdsl-lite
 )
-
 FetchContent_GetProperties(sdsl)
 if(NOT sdsl_POPULATED)
     FetchContent_Populate(sdsl)
@@ -88,7 +90,6 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/simongog/libdivsufsort.git
         GIT_TAG        2.0.1
 )
-
 FetchContent_GetProperties(divsufsort)
 if(NOT divsufsort_POPULATED)
     FetchContent_Populate(divsufsort)
@@ -106,7 +107,10 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
         GIT_TAG        v1.10.0
 )
-FetchContent_Populate(spdlog)
+FetchContent_GetProperties(spdlog)
+if(NOT spdlog_POPULATED)
+    FetchContent_Populate(spdlog)
+endif()
 include_directories(${spdlog_SOURCE_DIR}/include)
 
 # Catch
@@ -133,7 +137,10 @@ include_directories(${CMAKE_BINARY_DIR}/generated)
 
 file(GLOB SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
 if (ENABLE_MALLOC_COUNT)
-    FetchContent_Populate(mcount)
+    FetchContent_GetProperties(mcount)
+    if(NOT mcount_POPULATED)
+        FetchContent_Populate(mcount)
+    endif()
     message(STATUS "Using malloc_count.c")
     file(GLOB MALLOC_COUNT_SOURCES ${mcount_SOURCE_DIR}/*.c)
 else()
@@ -147,8 +154,10 @@ target_link_libraries(rlestring sdsl divsufsort divsufsort64)
 # Tests
 
 if (BUILD_TESTS OR ${CMAKE_BUILD_TYPE} MATCHES "Debug")
-    FetchContent_MakeAvailable(Catch2)
-
+    FetchContent_GetProperties(Catch2)
+    if(NOT Catch2_POPULATED)
+        FetchContent_MakeAvailable(Catch2)
+    endif()
     message(STATUS "Building unit tests")
     add_executable(unit_tests tests/unit_tests.cpp)
     target_link_libraries(unit_tests rlestring Catch2::Catch2)
