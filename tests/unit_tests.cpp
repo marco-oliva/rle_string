@@ -63,14 +63,14 @@ rle::string_type random_string(rle::size_type length, rle::string_type seed = {}
 
 //------------------------------------------------------------------------------
 
-TEST_CASE("Bitvector", "BitvectorEmptyConstructor")
+TEST_CASE("BitvectorEmptyConstructor", "Bitvector")
 {
     rle::bitvector bitvector;
 
     REQUIRE(bitvector.size() == 0);
 }
 
-TEST_CASE("Bitvector", "Rank")
+TEST_CASE("Rank", "Bitvector")
 {
     std::vector<bool> set = {0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1};
 
@@ -87,7 +87,7 @@ TEST_CASE("Bitvector", "Rank")
     REQUIRE(6 == bitvector.rank(12));
 }
 
-TEST_CASE("Bitvector", "Select")
+TEST_CASE("Select", "Bitvector")
 {
     std::vector<bool> set = {0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1};
 
@@ -100,7 +100,7 @@ TEST_CASE("Bitvector", "Select")
     REQUIRE(11 == bitvector.select(5));
 }
 
-TEST_CASE("RLEString", "FromEncoder")
+TEST_CASE("FromEncoder", "RLEString")
 {
     std::string path = testfiles_dir + "/test.rle";
     rle::string_type string = {'A','A','A','G','C','A','A','T','T','T','T','T','T','A','A','G','G','A','A','A'};
@@ -121,7 +121,7 @@ TEST_CASE("RLEString", "FromEncoder")
     }
 }
 
-TEST_CASE("RLESEncoder", "RandomSequence")
+TEST_CASE("RandomSequence", "RLESEncoder")
 {
     for (rle::size_type r = 0; r < 10; r++)
     {
@@ -143,7 +143,7 @@ TEST_CASE("RLESEncoder", "RandomSequence")
     }
 }
 
-TEST_CASE("RLEString", "FromConcatRunInterruption")
+TEST_CASE("FromConcatRunInterruption", "RLEString")
 {
     std::string path = testfiles_dir + "/test_cnct.seq";
     rle::RLEString::RLEncoderMerger encoders(path, 2);
@@ -174,7 +174,7 @@ TEST_CASE("RLEString", "FromConcatRunInterruption")
     }
 }
 
-TEST_CASE("RLEString", "FromConcatNoRunInterruption")
+TEST_CASE("FromConcatNoRunInterruption", "RLEString")
 {
     std::string path = testfiles_dir + "/test_cnct.seq";
     rle::RLEString::RLEncoderMerger encoders(path, 2);
@@ -207,7 +207,7 @@ TEST_CASE("RLEString", "FromConcatNoRunInterruption")
     }
 }
 
-TEST_CASE("RLEString", "RandomConcat")
+TEST_CASE("RandomConcat", "RLEString")
 {
     for (rle::size_type r = 0; r < 10; r++)
     {
@@ -244,7 +244,7 @@ TEST_CASE("RLEString", "RandomConcat")
 
 }
 
-TEST_CASE("RLEString", "RunCache_1")
+TEST_CASE("RunCache_1", "RLEString")
 {
     rle::string_type string = {'A','A','A','G','C','A','A','T','T','T','T','T','T','A','A','G','G','A','A','A'};
     rle::RLEString rle_string(string);
@@ -257,7 +257,7 @@ TEST_CASE("RLEString", "RunCache_1")
     }
 }
 
-TEST_CASE("RLEString", "RunCache_2")
+TEST_CASE("RunCache_2", "RLEString")
 {
     rle::string_type string = {'A', 'G', 'C', 'A', 'T', 'A', 'G', 'A'};
     rle::RLEString rle_string(string);
