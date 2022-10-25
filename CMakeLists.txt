@@ -22,13 +22,13 @@ message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 # Version number
 execute_process(
         COMMAND git rev-parse --abbrev-ref HEAD
-        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
         OUTPUT_VARIABLE GIT_BRANCH
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 execute_process(
         COMMAND git log -1 --format=%h
-        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
         OUTPUT_VARIABLE GIT_COMMIT_HASH
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 
@@ -37,10 +37,10 @@ message(STATUS "Git commit hash: ${GIT_COMMIT_HASH}")
 
 message(STATUS "Generating version.hpp")
 configure_file(
-        ${CMAKE_SOURCE_DIR}/include/rle/version.hpp.in
-        ${CMAKE_BINARY_DIR}/generated/rle/version.hpp)
+        ${PROJECT_SOURCE_DIR}/include/rle/version.hpp.in
+        ${PROJECT_BINARY_DIR}/generated/rle/version.hpp)
 
-include_directories(${CMAKE_BINARY_DIR}/generated)
+include_directories(${PROJECT_BINARY_DIR}/generated)
 
 ################################################################################
 # Compiler and linker flags
@@ -132,10 +132,10 @@ FetchContent_Declare(
 ################################################################################
 # Lib
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${CMAKE_BINARY_DIR}/generated)
 
-file(GLOB SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
+file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 if (ENABLE_MALLOC_COUNT)
     FetchContent_GetProperties(mcount)
     if(NOT mcount_POPULATED)
