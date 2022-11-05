@@ -39,11 +39,6 @@
 #include <limits>
 #include <cstdio>
 
-// Parallel sorting is only available with libstdc++ parallel mode.
-#ifdef __GLIBCXX__
-#include <parallel/algorithm>
-#endif
-
 #include <sdsl/bit_vectors.hpp>
 #include <sdsl/wavelet_trees.hpp>
 #include <sdsl/suffix_arrays.hpp>
@@ -313,93 +308,6 @@ size_type readRows(const std::string& filename, std::vector<std::string>& rows, 
 size_type fileSize(std::ifstream& file);
 size_type fileSize(std::ofstream& file);
 
-//------------------------------------------------------------------------------
-
-/*
-  parallelQuickSort() uses less working space than parallelMergeSort(). Calling omp_set_nested(1)
-  improves the speed of parallelQuickSort().
-*/
-
-template<class Iterator, class Comparator>
-void
-parallelQuickSort(Iterator first, Iterator last, const Comparator& comp)
-{
-    #ifdef __GLIBCXX__
-        int nested = omp_get_nested();
-    omp_set_nested(1);
-    __gnu_parallel::sort(first, last, comp, __gnu_parallel::balanced_quicksort_tag());
-    omp_set_nested(nested);
-    #else
-        std::sort(first, last, comp);
-    #endif
-}
-
-template<class Iterator>
-void
-parallelQuickSort(Iterator first, Iterator last)
-{
-    #ifdef __GLIBCXX__
-        int nested = omp_get_nested();
-        omp_set_nested(1);
-        __gnu_parallel::sort(first, last, __gnu_parallel::balanced_quicksort_tag());
-        omp_set_nested(nested);
-    #else
-        std::sort(first, last);
-    #endif
-}
-
-template<class Iterator, class Comparator>
-void
-parallelMergeSort(Iterator first, Iterator last, const Comparator& comp)
-{
-    #ifdef __GLIBCXX__
-        __gnu_parallel::sort(first, last, comp, __gnu_parallel::multiway_mergesort_tag());
-    #else
-        std::sort(first, last, comp);
-    #endif
-}
-
-template<class Iterator>
-void
-parallelMergeSort(Iterator first, Iterator last)
-{
-    #ifdef __GLIBCXX__
-        __gnu_parallel::sort(first, last, __gnu_parallel::multiway_mergesort_tag());
-    #else
-        std::sort(first, last);
-    #endif
-}
-
-template<class Iterator, class Comparator>
-void
-sequentialSort(Iterator first, Iterator last, const Comparator& comp)
-{
-    #ifdef __GLIBCXX__
-        __gnu_parallel::sort(first, last, comp, __gnu_parallel::sequential_tag());
-    #else
-        std::sort(first, last, comp);
-    #endif
-}
-
-template<class Iterator>
-void
-sequentialSort(Iterator first, Iterator last)
-{
-    #ifdef __GLIBCXX__
-        __gnu_parallel::sort(first, last, __gnu_parallel::sequential_tag());
-    #else
-        std::sort(first, last);
-    #endif
-}
-
-template<class Element>
-void
-removeDuplicates(std::vector<Element>& vec, bool parallel)
-{
-    if(parallel) { parallelQuickSort(vec.begin(), vec.end()); }
-    else         { sequentialSort(vec.begin(), vec.end()); }
-    vec.resize(std::unique(vec.begin(), vec.end()) - vec.begin());
-}
 
 //------------------------------------------------------------------------------
 
