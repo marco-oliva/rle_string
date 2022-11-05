@@ -37,19 +37,18 @@
 #include <mutex>
 #include <atomic>
 #include <limits>
-#include <stdio.h>
+#include <cstdio>
 
+// Parallel sorting is only available with libstdc++ parallel mode.
+#ifdef __GLIBCXX__
+#include <parallel/algorithm>
+#endif
 
 #include <sdsl/bit_vectors.hpp>
 #include <sdsl/wavelet_trees.hpp>
 #include <sdsl/suffix_arrays.hpp>
 
 #include <spdlog/spdlog.h>
-
-// Parallel sorting is only available with libstdc++ parallel mode.
-#ifdef __GLIBCXX__
-#include <parallel/algorithm>
-#endif
 
 namespace rle
 {
