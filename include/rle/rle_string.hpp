@@ -323,7 +323,7 @@ namespace rle
                 if (current_run.offset < i) current_run.offset = i;
             }
 
-            void operator++() { r_pos += 1; read(); }
+            void operator++() { r_pos += 1; if (not this->end()) { read(); } }
             const RunType& operator*() const { return current_run; }
 
             bool end() { return r_pos >= string.number_of_runs(); }
