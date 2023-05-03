@@ -3,8 +3,6 @@
 //
 
 #include <CLI/CLI.hpp>
-#include <spdlog/spdlog.h>
-
 #include <rle/rle_string.hpp>
 
 int main(int argc, char **argv)
@@ -20,10 +18,10 @@ int main(int argc, char **argv)
     CLI11_PARSE(app, argc, argv);
     
     // open each rle_string and output statistics
-    spdlog::info("name,n,r");
+    std::cout << "name,n,r" << std::endl;
     for (auto& rle_string_path : rle_string_paths)
     {
         rle::RLEString::Metadata rle_metadata(rle_string_path + ".meta", rle::RLEString::Metadata::read_tag());
-        spdlog::info("{},{},{}",rle_string_path, rle_metadata.size, rle_metadata.runs);
+        std::cout << rle_string_path << "," << rle_metadata.size << "," << rle_metadata.runs << std::endl;
     }
 }
