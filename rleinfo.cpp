@@ -20,10 +20,10 @@ int main(int argc, char **argv)
     CLI11_PARSE(app, argc, argv);
     
     // open each rle_string and output statistics
-    spdlog::info("n,r");
+    spdlog::info("name,n,r");
     for (auto& rle_string_path : rle_string_paths)
     {
         rle::RLEString::Metadata rle_metadata(rle_string_path + ".meta", rle::RLEString::Metadata::read_tag());
-        spdlog::info("{},{}", rle_metadata.size, rle_metadata.runs);
+        spdlog::info("{},{},{}",rle_string_path, rle_metadata.size, rle_metadata.runs);
     }
 }
