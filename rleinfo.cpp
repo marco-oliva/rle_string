@@ -13,7 +13,7 @@ int main(int argc, char **argv)
     
     std::vector<std::string> rle_string_paths;
     
-    app.add_option("input", rle_string_paths, "Level 1 Prefix.")->allow_extra_args(true)->delimiter(',')->configurable()->required()->check(CLI::ExistingFile);
+    app.add_option("input", rle_string_paths, "List of RLE strings.")->allow_extra_args(true)->delimiter(',')->configurable()->required()->check(CLI::ExistingFile);
     app.set_config("--configure");
     app.allow_windows_style_options();
     
