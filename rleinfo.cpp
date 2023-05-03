@@ -23,8 +23,7 @@ int main(int argc, char **argv)
     spdlog::info("n,r");
     for (auto& rle_string_path : rle_string_paths)
     {
-        rle::RLEString rle_string;
-        rle_string.load(rle_string_path);
-        spdlog::info("{},{}", rle_string.size(), rle_string.number_of_runs());
+        rle::RLEString::Metadata rle_metadata(rle_string_path + ".meta", rle::RLEString::Metadata::read_tag());
+        spdlog::info("{},{}", rle_metadata.size, rle_metadata.runs);
     }
 }
