@@ -165,3 +165,9 @@ if (BUILD_TESTS OR ${CMAKE_BUILD_TYPE} MATCHES "Debug")
     enable_testing()
     add_test(NAME unit_tests COMMAND unit_tests)
 endif()
+
+
+################################################################################
+# RLEinfo
+add_executable(rleinfo rleinfo.cpp)
+target_link_libraries(rleinfo rlestring)

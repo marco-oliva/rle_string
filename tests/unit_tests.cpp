@@ -270,6 +270,23 @@ TEST_CASE("RunCache_2", "RLEString")
     }
 }
 
+TEST_CASE("FromEncoderLong", "RLEString")
+{
+    std::string path = testfiles_dir + "/test.rle";
+
+    std::size_t test_lenght = rle::RLEString::RLEncoder::MAX_LEN + 10;
+    rle::RLEString::RLEncoder encoder(path);
+    encoder('A', test_lenght);
+    encoder('B', test_lenght);
+    encoder.close();
+
+    rle::RLEString rle_string;
+    rle_string.load(path);
+
+    REQUIRE(rle_string.size() == (2 * test_lenght));
+    REQUIRE(rle_string.number_of_runs() == 2);
+}
+
 //------------------------------------------------------------------------------
 
 int main( int argc, char* argv[] )
