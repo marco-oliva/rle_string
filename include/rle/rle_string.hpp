@@ -170,7 +170,7 @@ namespace rle
             size_type curr_run_length = 0;
             byte_type curr_run_char   = 0;
 
-            void append(byte_type c);
+            void append(byte_type c, size_type len);
 
             void write(byte_type c, size_type len, std::ofstream& out);
 
@@ -191,8 +191,8 @@ namespace rle
                 metadata.init(path + ".meta", Metadata::write_tag());
             }
 
-            void operator()(byte_type c) { assert(not closed); /*if (c == '\0') { c = '$'; }*/ append(c); }
-            void operator()(byte_type c, size_type len) { while (len > 0) { this->operator()(c); len -= 1; } }
+            void operator()(byte_type c) { this->operator()(c, 1); }
+            void operator()(byte_type c, size_type len) { assert(not closed); append(c, len); }
 
             void close();
         };
@@ -223,10 +223,6 @@ namespace rle
         {
         private:
 
-            std::array<size_type, alphabet_max_size()> runs_per_char = {0};
-            size_type size = 0;
-            size_type runs = 0;
-
             using packed_type = RLEncoder::packed_type;
 
             std::string out_path;
@@ -238,9 +234,7 @@ namespace rle
 
         public:
 
-            Metadata metadata;
-
-            RLEncoderMerger(std::string& path, size_type n) : out_path(path), encoders(n), metadata(path + ".meta", Metadata::write_tag())
+            RLEncoderMerger(std::string& path, size_type n) : out_path(path), encoders(n)
             {
                 for (auto& encoder : encoders)
                 {
@@ -255,7 +249,7 @@ namespace rle
                 return encoders[i].second;
             }
 
-            void close() { if (not merged) { merge(); }  metadata.close(); }
+            void close() { if (not merged) { merge(); }  }
 
             ~RLEncoderMerger()
             {

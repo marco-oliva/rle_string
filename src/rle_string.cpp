@@ -89,22 +89,22 @@ namespace rle
     }
 
     void
-    RLEString::RLEncoder::append(byte_type c)
+    RLEString::RLEncoder::append(byte_type c, size_type len)
     {
-        metadata.size += 1; metadata.size_per_char[c] += 1;
+        metadata.size += len; metadata.size_per_char[c] += len;
 
-        if (curr_run_char == '\0')
+        if (curr_run_char == '\0') // first char
         {
-            curr_run_length = 1; curr_run_char = c;
-            metadata.runs = 1; metadata.runs_per_char[c] +=1;
+            curr_run_length = len; curr_run_char = c;
+            metadata.runs = 1; metadata.runs_per_char[c] = 1;
             return;
-        } // first char
-        if (c == curr_run_char) { curr_run_length++; return; }
+        }
+        if (c == curr_run_char) { curr_run_length += len; return; }
 
         metadata.runs += 1; metadata.runs_per_char[c] +=1;
 
         write(curr_run_char, curr_run_length, out_stream);
-        curr_run_char = c; curr_run_length = 1;
+        curr_run_char = c; curr_run_length = len;
     }
 
 //------------------------------------------------------------------------------
@@ -147,73 +147,35 @@ namespace rle
     void
     RLEString::RLEncoderMerger::merge()
     {
-        if (merged) return;
-        merged = true;
+        // We could do the merging by copying and tweaking the files but having on encoder will be only
+        // marginally slower while far less error-prone.
 
-        std::ofstream out_stream(out_path);
+        if (merged) return; merged = true;
 
         // close all encoders
-        for (size_type i = 0; i < encoders.size(); i++) { encoders[i].second.close(); }
+        for (auto& p_encoder : encoders) { p_encoder.second.close(); }
 
-        // Merge run length files
-        for (size_type i = 0; i < encoders.size() - 1; i++)
+        // main out encoder
+        RLEncoder encoder(out_path);
+
+        // merge all files
+        for (auto& p_encoder : encoders)
         {
-            // metadata
-            metadata.size += encoders[i].second.metadata.size;
-            metadata.runs += encoders[i].second.metadata.runs;
-            for (size_type j = 0; j < alphabet_max_size(); j++)
+            RLEDecoder tmp_decoder(p_encoder.first);
+            while (not tmp_decoder.end())
             {
-                metadata.size_per_char[j] += encoders[i].second.metadata.size_per_char[j];
-                metadata.runs_per_char[j] += encoders[i].second.metadata.runs_per_char[j];
+                RunType run = tmp_decoder.next();
+                byte_type c = RunTraits::charachter(run);
+                size_type len = RunTraits::length(run);
+                if (len != 0) { encoder(c, len); }
             }
 
-            // read frist next
-            std::ifstream next(encoders[i+1].first, std::ios::binary);
-            packed_type next_start;
-            next.read(reinterpret_cast<char*>(&next_start), sizeof(packed_type));
-
-            // read last curr
-            std::ifstream curr(encoders[i].first, std::ios::binary);
-            curr.seekg(- (sizeof(packed_type)), std::ios_base::end);
-            packed_type curr_end;
-            curr.read(reinterpret_cast<char*>(&curr_end), sizeof(packed_type));
-
-            // write whole file to output
-            curr.seekg(0, std::ios_base::beg);
-            out_stream << curr.rdbuf();
-
-            // overwrite last element if necessary
-            byte_type next_start_char = next_start & RLEncoder::CHAR_MASK;
-            byte_type curr_end_char = curr_end & RLEncoder::CHAR_MASK;
-            if (next_start_char == curr_end_char)
-            {
-                metadata.runs -= 1;
-                metadata.runs_per_char[curr_end_char] -= 1;
-
-                out_stream.seekp(out_stream.tellp() - std::ios::pos_type(sizeof(packed_type)));
-                curr_end = curr_end | RLEncoder::NEXT_RECORD;
-                out_stream.write(reinterpret_cast<char*>(&curr_end), sizeof(packed_type));
-            }
-
-            curr.close();
-            next.close();
         }
 
-        // last file
-        metadata.size += encoders[encoders.size() - 1].second.metadata.size;
-        metadata.runs += encoders[encoders.size() - 1].second.metadata.runs;
-        for (size_type i = 0; i < alphabet_max_size(); i++)
-        {
-            metadata.size_per_char[i] += encoders[encoders.size() - 1].second.metadata.size_per_char[i];
-            metadata.runs_per_char[i] += encoders[encoders.size() - 1].second.metadata.runs_per_char[i];
-        }
-        std::ifstream in(encoders[encoders.size() - 1].first, std::ios::binary);
-        out_stream << in.rdbuf();
+        // close main out encoder
+        encoder.close();
 
-        if(Verbosity::level >= Verbosity::BASIC)
-        {
-            spdlog::info("Completed rle string merge");
-        }
+        if(Verbosity::level >= Verbosity::BASIC) { spdlog::info("Completed rle string merge"); }
     }
 
 //------------------------------------------------------------------------------
