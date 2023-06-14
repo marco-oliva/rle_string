@@ -13,7 +13,7 @@ docker run moliva3/rle_string:latest rleinfo --help
 
 If using singularity:
 ```bash
-singularity pull rlestring_sif docker://moliva3/rleinfo:latest
+singularity pull rlestring_sif docker://moliva3/rle_string:latest
 ./rlestring_sif rleinfo --help
 ```
 
