@@ -23,4 +23,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: moliva3/r-pfbwt:latest
+          tags: moliva3/rle_string:latest
