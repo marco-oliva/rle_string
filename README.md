@@ -1,4 +1,5 @@
 # rle_string
+[![CMake](https://github.com/marco-oliva/rle_string/actions/workflows/cmake.yml/badge.svg?branch=main)](https://github.com/marco-oliva/rle_string/actions/workflows/cmake.yml)
 
 Simple Implementation of a Run Length Encoded String. Heavily inspired from https://github.com/nicolaprezza/r-index/blob/master/internal/rle_string.hpp
 
