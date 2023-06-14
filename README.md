@@ -46,5 +46,6 @@ Positionals:
 
 Options:
   -h,--help                   Print this help message and exit
+  -l,--load-string            
   --configure                 Read an ini file
 ```
